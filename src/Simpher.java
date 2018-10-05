@@ -1,5 +1,8 @@
 import javax.crypto.*;
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.Key;
@@ -19,6 +22,33 @@ public class Simpher {
             System.out.println("Do you want to encrypt a file or a string?(print f or s)");
             if (s.nextLine().toLowerCase().startsWith("f")) {
                 System.out.println("Starting file encrypt sequence...");
+                System.out.println("You can provide your path or use your homepath " + System.getProperty("user.home"));
+                System.out.println("If you want to use your homepath make sure your file is in it and its called just \"toenc\", " +
+                        "without any extension");
+                System.out.println("So do you want to use homepath or your path?(print h or p)");
+                if (s.nextLine().toLowerCase().startsWith("h")) {
+                    FileInputStream fis = null;
+                    try {
+                        fis = new FileInputStream(System.getProperty("user.home") + "toenc");
+                    } catch (FileNotFoundException e) {
+                        System.out.println("File " + System.getProperty("user.home") + "toenc not found!");
+                        System.exit(0);
+                    }
+                    byte[] b = new byte[0];
+                    try {
+                        b = new byte[fis.available()];
+                    } catch (IOException e) {
+                        ioerror();
+                    }
+                    try {
+                        fis.read(b);
+                    } catch (IOException e) {
+                        ioerror();
+                    }
+                } else {
+
+                }
+
             } else {
                 System.out.println("Starting string encrypt sequence...");
                 System.out.println("Enter a string you want to encrypt");
@@ -84,12 +114,15 @@ public class Simpher {
             } catch (NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
                 standarterror();
             } catch (IOException e) {
-                System.out.println("Error saving");
-                System.exit(0);
+                ioerror();
             }
         }
     }
 
+    private static void ioerror() {
+        System.out.println("Error reading/writing your file!");
+        System.exit(0);
+    }
     private static void standarterror() {
         System.out.println("Error!");
         System.exit(0);
